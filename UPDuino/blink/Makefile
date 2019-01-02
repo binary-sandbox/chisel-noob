@@ -1,6 +1,7 @@
 PROJECT=blink
 PCF=blink.pcf
 DEVICE=up5k
+PACKAGE=sg48
 FREQ=48 #MHz
 
 SRC= blink.v
@@ -19,10 +20,10 @@ build/$(PROJECT).ys: build/project.src
 	echo "write_json build/$(PROJECT).json" >> $@
 
 syn: build/$(PROJECT).ys
-	yosys build/$(PROJECT).ys
+	yosys build/$(PROJECT).ys -L build/SYN.log
 
 build/$(PROJECT).asc : syn build/$(PROJECT).json
-	nextpnr-ice40 --pcf $(PCF) --json build/$(PROJECT).json --asc build/$(PROJECT).asc --$(DEVICE) --freq $(FREQ)
+	nextpnr-ice40 --pcf $(PCF) --json build/$(PROJECT).json --asc build/$(PROJECT).asc --$(DEVICE) --freq $(FREQ) --package $(PACKAGE) -l build/PAR.log
 
 $(PROJECT).bin: build/$(PROJECT).asc  
 	icepack build/$(PROJECT).asc $(PROJECT).bin
