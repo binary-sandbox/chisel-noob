@@ -16,7 +16,13 @@ module blink
 
   wire led[2:0];
 
-  blink_core blink0(.clock(int_osc),.reset(rstn),.io_led1(led[0]),.io_led2(led[1]),.io_led3(led[2]));
+  blink_core blink0(
+    .clock(int_osc),
+    .reset(rstn),
+    .io_led1(led[0]),
+    .io_led2(led[1]),
+    .io_led3(led[2])
+  ); // CHISEL 3 Generator
   
   SB_RGBA_DRV RGB_DRIVER ( 
     .RGBLEDEN (1'b1),
