@@ -4,14 +4,19 @@ DEVICE=up5k
 PACKAGE=sg48
 FREQ=48 #MHz
 
-SRC= blink.v
+SRC= blink.v \
+		 blink_core.v
 
 all: bit
 
-build/project.src: $(SRC)
+blink_core.v:
+	make -C scala/
+	make prepare -C scala/
+
+build/project.src: $(SRC) blink_core.v
 	@[ -d build ] || mkdir build
 	@[ -d simulation ] || mkdir simulation
-	@rm -f $@
+	@rm -vf $@
 	for i in $(SRC); do echo verilog work ../$$i >> $@; done
 
 build/$(PROJECT).ys: build/project.src
@@ -32,12 +37,16 @@ bit: $(PROJECT).bin
 
 clean:
 	rm -rf build/
+	make clean -C scala/
+	rm blink_core.v
 	rm $(PROJECT).bin
 
 cleanall:
-	rm -rf build/
-	rm $(PROJECT).bin
-	rm -rf simulation/
+	rm -rfv simulation/
+	make clean -C scala
+	rm blink_core.v
+	rm -rfv build/
+	rm -v $(PROJECT).bin
 
 upload: 
 	sudo iceprog $(PROJECT).bin
